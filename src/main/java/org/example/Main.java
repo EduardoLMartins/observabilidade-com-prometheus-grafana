@@ -36,18 +36,21 @@ public class Main {
     Summary summary =
             Summary.builder()
                     .name("aula_summary_request_time_seconds")
+                    .quantile(0.5)
+                    .quantile(0.99)
+                    .quantile(0.9)
                     .help("Tempo de resposta da API")
-                    .register(); // sem quantiles
+                    .register();
 
     public static void main(String[] args) throws Exception {
         SpringApplication.run(Main.class, args);
 
-        try (HTTPServer server = HTTPServer.builder()
-                .port(8081)
-                .buildAndStart()) {
-            System.out.println("Métricas disponíveis em http://localhost:8081/metrics");
-            Thread.currentThread().join();
-        }
+        // Mantém o servidor de métricas ativo
+        HTTPServer server = HTTPServer.builder()
+                .port(3000)
+                .buildAndStart();
+
+        System.out.println("Métricas disponíveis em http://127.0.0.1:8081/metrics");
     }
 
     @RestController
